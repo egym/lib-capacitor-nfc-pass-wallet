@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  web-contracts:
+    name: Contracts + Capacitor (Build + Test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm run test
+
+  android:
+    name: Android SDK Build + Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "23"
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v5
+      - run: yes | sdkmanager --licenses
+      - run: gradle assemble
+        working-directory: packages/android-sdk
+      - run: gradle test
+        working-directory: packages/android-sdk
+
+  ios:
+    name: iOS SDK Build + Test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - run: swift build
+        working-directory: packages/ios-sdk
+      - run: swift test
+        working-directory: packages/ios-sdk
+      - run: pod lib lint EGYMNFCPassWallet.podspec --allow-warnings
+        working-directory: packages/ios-sdk
+
+  flutter:
+    name: Flutter Plugin Build + Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+        working-directory: packages/flutter_nfc_pass_wallet
+      - run: flutter analyze
+        working-directory: packages/flutter_nfc_pass_wallet
+      - run: flutter test
+        working-directory: packages/flutter_nfc_pass_wallet
