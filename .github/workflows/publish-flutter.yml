@@ -32,8 +32,8 @@ jobs:
           PUB_DEV_PUBLISH_TOKEN_ENDPOINT: ${{ secrets.PUB_DEV_PUBLISH_TOKEN_ENDPOINT }}
           PUB_DEV_PUBLISH_EXPIRATION: ${{ secrets.PUB_DEV_PUBLISH_EXPIRATION }}
       - run: flutter pub get
-        working-directory: packages/flutter_nfc_pass_wallet
+        working-directory: packages/flutter
       - run: flutter analyze
-        working-directory: packages/flutter_nfc_pass_wallet
+        working-directory: packages/flutter
       - run: dart pub publish --force
-        working-directory: packages/flutter_nfc_pass_wallet
+        working-directory: packages/flutter

@@ -20,9 +20,6 @@
   "peerDependencies": {
     "@capacitor/core": ">=6.0.0"
   },
-  "dependencies": {
-    "@egym/nfc-pass-wallet-contracts": "0.1.0"
-  },
   "devDependencies": {
     "@capacitor/core": "^6.2.0",
     "typescript": "^5.8.2",

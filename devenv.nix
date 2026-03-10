@@ -26,7 +26,7 @@
   };
 
   scripts.gw.exec = ''
-    cd packages/android-sdk
+    cd packages/android
     gradle "$@"
   '';
 

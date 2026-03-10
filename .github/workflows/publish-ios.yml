@@ -17,10 +17,10 @@ jobs:
       - uses: actions/checkout@v6
       - name: Verify Swift package
         run: swift build
-        working-directory: packages/ios-sdk
+        working-directory: packages/ios
       - name: Validate podspec
         run: pod lib lint EGYMNFCPassWallet.podspec --allow-warnings
-        working-directory: packages/ios-sdk
+        working-directory: packages/ios
       - name: Create git tag
         run: |
           git config user.name github-actions
@@ -29,6 +29,6 @@ jobs:
           git push origin ${{ github.event.inputs.version }}
       - name: Push CocoaPod
         run: pod trunk push EGYMNFCPassWallet.podspec --allow-warnings
-        working-directory: packages/ios-sdk
+        working-directory: packages/ios
         env:
           COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}

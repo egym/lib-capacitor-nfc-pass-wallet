@@ -17,14 +17,12 @@ export type ReadPassFromWalletResult = {
   result: boolean;
 };
 
-export type WalletPlatform = 'web' | 'ios' | 'android' | 'flutter';
-
 export type WalletErrorCode =
-  | 'UNAVAILABLE'
-  | 'INVALID_PAYLOAD'
-  | 'NOT_SUPPORTED'
-  | 'USER_CANCELED'
-  | 'NATIVE_ERROR';
+  | "UNAVAILABLE"
+  | "INVALID_PAYLOAD"
+  | "NOT_SUPPORTED"
+  | "USER_CANCELED"
+  | "NATIVE_ERROR";
 
 export type WalletError = {
   code: WalletErrorCode;
@@ -34,6 +32,16 @@ export type WalletError = {
 
 export type NFCPassWallet = {
   savePassToWallet(options: SavePassToWalletOptions): Promise<void>;
-  readPassFromWallet(options: ReadPassFromWalletOptions): Promise<ReadPassFromWalletResult>;
+  readPassFromWallet(
+    options: ReadPassFromWalletOptions,
+  ): Promise<ReadPassFromWalletResult>;
   isWalletAvailable(): Promise<WalletAvailabilityResult>;
 };
+
+export interface CapacitorNFCPassWalletPlugin extends NFCPassWallet {
+  savePassToWallet(options: SavePassToWalletOptions): Promise<void>;
+  readPassFromWallet(
+    options: ReadPassFromWalletOptions,
+  ): Promise<ReadPassFromWalletResult>;
+  isWalletAvailable(): Promise<WalletAvailabilityResult>;
+}

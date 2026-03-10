@@ -17,7 +17,7 @@ jobs:
           java-version: "23"
       - uses: gradle/actions/setup-gradle@v5
       - run: gradle publish
-        working-directory: packages/android-sdk
+        working-directory: packages/android
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}

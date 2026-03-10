@@ -6,20 +6,6 @@ on:
     branches: [main]
 
 jobs:
-  web-contracts:
-    name: Contracts + Capacitor (Build + Test)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
-      - run: npm run typecheck
-      - run: npm run build
-      - run: npm run test
-
   android:
     name: Android SDK Build + Test
     runs-on: ubuntu-latest
@@ -33,9 +19,9 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
       - run: yes | sdkmanager --licenses
       - run: gradle assemble
-        working-directory: packages/android-sdk
+        working-directory: packages/android
       - run: gradle test
-        working-directory: packages/android-sdk
+        working-directory: packages/android
 
   ios:
     name: iOS SDK Build + Test
@@ -43,11 +29,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: swift build
-        working-directory: packages/ios-sdk
+        working-directory: packages/ios
       - run: swift test
-        working-directory: packages/ios-sdk
+        working-directory: packages/ios
       - run: pod lib lint EGYMNFCPassWallet.podspec --allow-warnings
-        working-directory: packages/ios-sdk
+        working-directory: packages/ios
 
   flutter:
     name: Flutter Plugin Build + Test
@@ -58,8 +44,8 @@ jobs:
         with:
           channel: stable
       - run: flutter pub get
-        working-directory: packages/flutter_nfc_pass_wallet
+        working-directory: packages/flutter
       - run: flutter analyze
-        working-directory: packages/flutter_nfc_pass_wallet
+        working-directory: packages/flutter
       - run: flutter test
-        working-directory: packages/flutter_nfc_pass_wallet
+        working-directory: packages/flutter

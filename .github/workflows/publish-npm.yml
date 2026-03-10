@@ -25,10 +25,6 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm publish --access public --provenance
-        working-directory: packages/contracts
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: npm publish --access public --provenance
         working-directory: packages/capacitor-nfc-pass-wallet
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # TODO remove and replace with trusted publishing

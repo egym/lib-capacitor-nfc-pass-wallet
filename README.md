@@ -9,11 +9,10 @@ This repository contains the source for all NFC wallet integration SDKs/plugins:
 
 ## Packages
 
-- `packages/contracts` shared API contract and platform capability model
 - `packages/capacitor-nfc-pass-wallet` Capacitor plugin for RMWAs
-- `packages/android-sdk` Android native SDK (`AAR`)
-- `packages/ios-sdk` iOS native SDK (`Swift Package` + Podspec)
-- `packages/flutter_nfc_pass_wallet` Flutter plugin wrapper
+- `packages/android` Android native SDK (`AAR`)
+- `packages/ios` iOS native SDK (`Swift Package` + Podspec)
+- `packages/flutter` Flutter plugin wrapper
 
 ## Scope for current phase
 
@@ -50,7 +49,7 @@ gw test
 
 - `devenv` provisions Java + Android SDK for this project.
 - `ANDROID_HOME` / `ANDROID_SDK_ROOT` are set in the shell.
-- The `gw` helper runs Gradle from `packages/android-sdk`.
+- The `gw` helper runs Gradle from `packages/android`.
 
 ## Release Automation
 
