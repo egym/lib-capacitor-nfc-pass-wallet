@@ -13,7 +13,9 @@ build/
 **/Pods/
 **/.symlinks/
 **/.build/
+.devenv.flake.nix
 
 local.properties
 
 .devenv/
+g
