@@ -6,7 +6,7 @@ import 'package:egym_nfc_pass_wallet/egym_nfc_pass_wallet.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const channel = MethodChannel('egym_nfc_pass_wallet');
+  const channel = MethodChannel('CapacitorNFCPassWallet');
   final calls = <MethodCall>[];
 
   setUp(() {
@@ -17,9 +17,9 @@ void main() {
 
           switch (methodCall.method) {
             case 'readPassFromWallet':
-              return true;
+              return {'result': true};
             case 'isWalletAvailable':
-              return true;
+              return {'result': true};
             default:
               return null;
           }
@@ -34,6 +34,7 @@ void main() {
   test('savePassToWallet forwards arguments to channel', () async {
     await EgymNfcPassWallet.savePassToWallet(
       iosPkPassBase64: 'pkpass',
+      androidPassJwt: 'legacy-jwt',
       googlePayJwt: 'jwt',
       saveToGooglePayUrl: 'https://example.com/save',
     );
@@ -41,6 +42,7 @@ void main() {
     expect(calls.single.method, 'savePassToWallet');
     expect(calls.single.arguments, {
       'iosPkPassBase64': 'pkpass',
+      'androidPassJwt': 'legacy-jwt',
       'googlePayJwt': 'jwt',
       'saveToGooglePayUrl': 'https://example.com/save',
     });
@@ -49,7 +51,7 @@ void main() {
   test('readPassFromWallet returns channel result', () async {
     final value = await EgymNfcPassWallet.readPassFromWallet(iosPkPassBase64: 'pkpass');
 
-    expect(value, true);
+    expect(value.result, true);
     expect(calls.single.method, 'readPassFromWallet');
   });
 
@@ -62,13 +64,13 @@ void main() {
 
     final value = await EgymNfcPassWallet.readPassFromWallet(iosPkPassBase64: 'pkpass');
 
-    expect(value, false);
+    expect(value.result, false);
   });
 
   test('isWalletAvailable returns channel result', () async {
     final value = await EgymNfcPassWallet.isWalletAvailable();
 
-    expect(value, true);
+    expect(value.result, true);
     expect(calls.single.method, 'isWalletAvailable');
   });
 
@@ -81,6 +83,6 @@ void main() {
 
     final value = await EgymNfcPassWallet.isWalletAvailable();
 
-    expect(value, false);
+    expect(value.result, false);
   });
 }

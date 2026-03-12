@@ -6,8 +6,20 @@ on:
     branches: [main]
 
 jobs:
+  npm:
+    name: Capacitor Package Build + Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+
   android:
-    name: Android SDK Build + Test
+    name: Capacitor Android Build + Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -19,21 +31,17 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
       - run: yes | sdkmanager --licenses
       - run: gradle assemble
-        working-directory: packages/android
+        working-directory: packages/capacitor/android
       - run: gradle test
-        working-directory: packages/android
+        working-directory: packages/capacitor/android
 
   ios:
-    name: iOS SDK Build + Test
+    name: Capacitor iOS Podspec Validation
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
-      - run: swift build
-        working-directory: packages/ios
-      - run: swift test
-        working-directory: packages/ios
-      - run: pod lib lint EGYMNFCPassWallet.podspec --allow-warnings
-        working-directory: packages/ios
+      - run: pod lib lint CapacitorNFCPassWallet.podspec --allow-warnings
+        working-directory: packages/capacitor
 
   flutter:
     name: Flutter Plugin Build + Test

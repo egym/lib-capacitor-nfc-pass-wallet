@@ -4,19 +4,6 @@
 
 - `NPM_TOKEN`
 
-## Maven Central (Android)
-
-- `MAVEN_CENTRAL_USERNAME`
-- `MAVEN_CENTRAL_PASSWORD`
-- `MAVEN_GPG_PRIVATE_KEY`
-- `MAVEN_GPG_PASSPHRASE`
-
-## iOS (SPM + CocoaPods)
-
-- `COCOAPODS_TRUNK_TOKEN`
-
-SPM distribution is tag/release based and does not require package upload credentials.
-
 ## pub.dev (Flutter)
 
 - `PUB_DEV_PUBLISH_ACCESS_TOKEN`

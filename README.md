@@ -1,22 +1,18 @@
-# EGYM RMWA NFC SDK Monorepo
+# EGYM RMWA NFC Wallet Plugins
 
-This repository contains the source for all NFC wallet integration SDKs/plugins:
+This repository contains the source for the supported NFC wallet plugin deliverables:
 
-- Web/Capacitor plugin (npm)
-- Android SDK (Maven Central)
-- iOS SDK (SPM + CocoaPods)
+- Capacitor plugin (npm)
 - Flutter plugin (pub.dev)
 
 ## Packages
 
-- `packages/capacitor-nfc-pass-wallet` Capacitor plugin for RMWAs
-- `packages/android` Android native SDK (`AAR`)
-- `packages/ios` iOS native SDK (`Swift Package` + Podspec)
-- `packages/flutter` Flutter plugin wrapper
+- `packages/capacitor` Capacitor plugin for RMWAs, including bundled Android and iOS native implementations
+- `packages/flutter` Flutter plugin with its own Android and iOS native implementations
 
 ## Scope for current phase
 
-- Included now: shared contract, Capacitor plugin, Android SDK, iOS SDK, Flutter plugin, and release automation.
+- Included now: Capacitor plugin, Flutter plugin, and release automation.
 - Deferred: end-to-end sample apps/integration demos (to be added in a later phase).
 
 ## API Surface
@@ -37,27 +33,35 @@ npm run build:ios
 npm run build:flutter
 ```
 
-## Local Android SDK via devenv
+## Local Android Toolchain via devenv
 
 To avoid using a system-wide Android SDK, this repo supports a project-local SDK/toolchain via `devenv`.
 
 ```bash
 devenv shell
-gw assemble
-gw test
+cd packages/capacitor/android
+gradle assemble
+gradle test
 ```
 
 - `devenv` provisions Java + Android SDK for this project.
 - `ANDROID_HOME` / `ANDROID_SDK_ROOT` are set in the shell.
-- The `gw` helper runs Gradle from `packages/android`.
+- The Capacitor plugin's Android implementation lives in `packages/capacitor/android`.
+
+## Local iOS Validation
+
+The Capacitor plugin's iOS implementation is distributed through the plugin podspec.
+
+```bash
+cd packages/capacitor
+pod lib lint CapacitorNFCPassWallet.podspec --allow-warnings
+```
 
 ## Release Automation
 
 GitHub Actions workflows are defined in `.github/workflows` for CI and per-ecosystem publishing:
 
 - npm publish (`publish-npm.yml`)
-- Android publish (`publish-android.yml`)
-- iOS publish (`publish-ios.yml`)
 - Flutter publish (`publish-flutter.yml`)
 
 Required secrets are documented in `docs/RELEASE_SECRETS.md`.

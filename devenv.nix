@@ -26,7 +26,7 @@
   };
 
   scripts.gw.exec = ''
-    cd packages/android
+    cd packages/capacitor/android
     gradle "$@"
   '';
 
