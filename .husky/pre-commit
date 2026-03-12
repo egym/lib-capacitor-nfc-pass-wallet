@@ -1,8 +1,3 @@
 #!/usr/bin/env sh
 
-if git diff --cached --name-only | grep -q '^packages/ios/.build/'; then
-	echo '⚠️ Removing staged Swift build artifacts under packages/ios/.build/'
-	git restore --staged packages/ios/.build 2>/dev/null || true
-fi
-
 npx lint-staged --concurrent false

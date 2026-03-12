@@ -5,7 +5,14 @@
   "license": "UNLICENSED",
   "type": "module",
   "main": "dist/plugin.js",
-  "types": "dist/definitions.d.ts",
+  "types": "dist/plugin.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.js",
+      "default": "./dist/plugin.js"
+    }
+  },
   "files": [
     "dist",
     "android",
