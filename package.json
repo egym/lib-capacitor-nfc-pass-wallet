@@ -1,6 +1,5 @@
 {
-  "name": "lib-capacitor-nfc-pass-wallet",
-  "private": true,
+  "name": "@egym/capacitor-nfc-pass-wallet",
   "version": "0.1.0",
   "description": "Cross-platform NFC pass wallet plugins for Capacitor and Flutter",
   "workspaces": [
