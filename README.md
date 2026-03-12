@@ -19,7 +19,7 @@ The Capacitor plugin bundles its Android and iOS native implementations, so part
 ### Import
 
 ```ts
-import { CapacitorNFCPassWallet } from '@egym/capacitor-nfc-pass-wallet';
+import { CapacitorNFCPassWallet } from "@egym/capacitor-nfc-pass-wallet";
 ```
 
 ### API
@@ -30,6 +30,20 @@ The published Capacitor plugin exposes three methods:
 - `readPassFromWallet`
 - `isWalletAvailable`
 
+The `.result` property used in the examples comes from the plugin's TypeScript contract. Both `isWalletAvailable()` and `readPassFromWallet()` resolve to objects with a boolean `result` field rather than returning a bare boolean.
+
+```ts
+type WalletAvailabilityResult = {
+  result: boolean;
+};
+
+type ReadPassFromWalletResult = {
+  result: boolean;
+};
+```
+
+That is why the examples use `availability.result` and `passState.result`.
+
 #### `isWalletAvailable`
 
 Use this before showing wallet actions in the UI.
@@ -38,7 +52,7 @@ Use this before showing wallet actions in the UI.
 const availability = await CapacitorNFCPassWallet.isWalletAvailable();
 
 if (availability.result) {
-	// show wallet CTA
+  // show wallet CTA
 }
 ```
 
@@ -48,7 +62,7 @@ On iOS, pass `iosPkPassBase64` with the Base64-encoded `.pkpass` payload.
 
 ```ts
 await CapacitorNFCPassWallet.savePassToWallet({
-	iosPkPassBase64,
+  iosPkPassBase64,
 });
 ```
 
@@ -56,9 +70,9 @@ On Android, prefer `googlePayJwt` when available. `saveToGooglePayUrl` is also s
 
 ```ts
 await CapacitorNFCPassWallet.savePassToWallet({
-	googlePayJwt,
-	saveToGooglePayUrl,
-	androidPassJwt,
+  googlePayJwt,
+  saveToGooglePayUrl,
+  androidPassJwt,
 });
 ```
 
@@ -74,11 +88,11 @@ This is supported on iOS only and returns whether the pass is already present in
 
 ```ts
 const passState = await CapacitorNFCPassWallet.readPassFromWallet({
-	iosPkPassBase64,
+  iosPkPassBase64,
 });
 
 if (passState.result) {
-	// pass already exists in Apple Wallet
+  // pass already exists in Apple Wallet
 }
 ```
 
@@ -90,25 +104,25 @@ On Android, `readPassFromWallet` is not supported by Google Wallet APIs and will
 const availability = await CapacitorNFCPassWallet.isWalletAvailable();
 
 if (!availability.result) {
-	return;
+  return;
 }
 
-if (platform === 'ios') {
-	const existingPass = await CapacitorNFCPassWallet.readPassFromWallet({
-		iosPkPassBase64,
-	});
+if (platform === "ios") {
+  const existingPass = await CapacitorNFCPassWallet.readPassFromWallet({
+    iosPkPassBase64,
+  });
 
-	if (!existingPass.result) {
-		await CapacitorNFCPassWallet.savePassToWallet({ iosPkPassBase64 });
-	}
+  if (!existingPass.result) {
+    await CapacitorNFCPassWallet.savePassToWallet({ iosPkPassBase64 });
+  }
 }
 
-if (platform === 'android') {
-	await CapacitorNFCPassWallet.savePassToWallet({
-		googlePayJwt,
-		saveToGooglePayUrl,
-		androidPassJwt,
-	});
+if (platform === "android") {
+  await CapacitorNFCPassWallet.savePassToWallet({
+    googlePayJwt,
+    saveToGooglePayUrl,
+    androidPassJwt,
+  });
 }
 ```
 
@@ -175,3 +189,19 @@ GitHub Actions workflows are defined in `.github/workflows` for CI and per-ecosy
 - Flutter publish (`publish-flutter.yml`)
 
 Required secrets are documented in `docs/RELEASE_SECRETS.md`.
+
+### Publish a New Version
+
+This repository uses Changesets for versioning.
+
+1. Create a changeset for your change.
+
+```bash
+npx changeset
+```
+
+2. Commit the generated changeset file together with your code changes.
+3. Merge the change into `main`.
+4. The `changesets.yml` workflow will open or update a release PR with the version bumps.
+5. Merge that release PR.
+6. Trigger the publish workflow you need from GitHub Actions.
