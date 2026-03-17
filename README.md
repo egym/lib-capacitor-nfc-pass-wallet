@@ -138,6 +138,8 @@ if (platform === "android") {
 - `packages/capacitor` Capacitor plugin for RMWAs, including bundled Android and iOS native implementations
 - `packages/flutter` Flutter plugin with its own Android and iOS native implementations
 
+The repository root is a private npm workspace root used for shared tooling. The publishable Capacitor package is the workspace package in `packages/capacitor`.
+
 ## Scope for current phase
 
 - Included now: Capacitor plugin, Flutter plugin, and release automation.
@@ -185,6 +187,7 @@ pod lib lint CapacitorNFCPassWallet.podspec --allow-warnings
 
 GitHub Actions workflows are defined in `.github/workflows` for CI and per-ecosystem publishing:
 
+- changeset release PR generation (`changesets.yml`)
 - npm publish (`publish-npm.yml`)
 - Flutter publish (`publish-flutter.yml`)
 
@@ -202,6 +205,16 @@ npx changeset
 
 2. Commit the generated changeset file together with your code changes.
 3. Merge the change into `main`.
-4. The `changesets.yml` workflow will open or update a release PR with the version bumps.
+4. The `changesets.yml` workflow runs on `main`, applies all pending changesets with `changeset version`, and opens or updates the `chore: release packages` PR.
 5. Merge that release PR.
 6. Trigger the publish workflow you need from GitHub Actions.
+
+The release PR is generated from a dedicated branch, `chore/release-packages`. Each new merge to `main` with pending changesets force-updates that branch and refreshes the same PR instead of opening a new one.
+
+In practice, the flow is:
+
+1. Add code changes plus a `.changeset/*.md` file in your feature PR.
+2. Merge that PR to `main`.
+3. Let `changesets.yml` create or update the release PR with version bumps.
+4. Review and merge the release PR.
+5. Manually run `publish-npm.yml` and/or `publish-flutter.yml` for the ecosystem you want to release.

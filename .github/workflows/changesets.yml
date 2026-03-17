@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: changesets-versioning
+  cancel-in-progress: true
+
 permissions:
   contents: write
   pull-requests: write
@@ -11,6 +15,10 @@ permissions:
 jobs:
   version:
     runs-on: ubuntu-latest
+    env:
+      BRANCH_NAME: chore/release-packages
+      COMMIT_MESSAGE: "chore: version packages"
+      PR_TITLE: "chore: release packages"
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -18,10 +26,32 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - uses: changesets/action@v1
-        with:
-          version: npm exec changeset version
-          commit: "chore: version packages"
-          title: "chore: release packages"
+      - name: Version packages
+        run: npm exec changeset version
+      - name: Create or update release pull request
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet; then
+            echo "No pending changesets to version."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout -B "$BRANCH_NAME"
+          git add -A
+          git commit -m "$COMMIT_MESSAGE"
+          git push --force origin HEAD:"$BRANCH_NAME"
+
+          if [[ "$(gh pr list --head "$BRANCH_NAME" --base main --state open --json number --jq 'length')" != "0" ]]; then
+            echo "Release PR already exists for $BRANCH_NAME."
+            exit 0
+          fi
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH_NAME" \
+            --title "$PR_TITLE" \
+            --body "Automated release PR generated from merged changesets on main."

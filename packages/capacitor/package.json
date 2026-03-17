@@ -1,6 +1,6 @@
 {
   "name": "@egym/capacitor-nfc-pass-wallet",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Capacitor plugin for NFC pass wallet integration",
   "license": "UNLICENSED",
   "type": "module",
