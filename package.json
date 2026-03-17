@@ -1,0 +1,29 @@
+{
+  "name": "@egym/capacitor-nfc-pass-wallet",
+  "version": "0.1.0",
+  "description": "Cross-platform NFC pass wallet plugins for Capacitor and Flutter",
+  "workspaces": [
+    "packages/capacitor"
+  ],
+  "scripts": {
+    "prepare": "husky",
+    "build": "npm run build -w @egym/capacitor-nfc-pass-wallet",
+    "typecheck": "npm run typecheck -w @egym/capacitor-nfc-pass-wallet",
+    "test": "npm run test -w @egym/capacitor-nfc-pass-wallet",
+    "lint:ts": "npm run typecheck",
+    "lint:android": "if [ \"$USE_SYSTEM_ANDROID_SDK\" = \"1\" ]; then cd packages/capacitor/android && gradle lint; elif command -v devenv >/dev/null 2>&1; then devenv shell -- sh -c 'cd packages/capacitor/android && gradle lint'; else cd packages/capacitor/android && gradle lint; fi",
+    "lint:ios": "cd packages/capacitor && pod lib lint CapacitorNFCPassWallet.podspec --allow-warnings",
+    "lint:flutter": "cd packages/flutter && (command -v flutter >/dev/null 2>&1 && flutter analyze || echo 'flutter not found, skipping local flutter lint')",
+    "build:android": "if [ \"$USE_SYSTEM_ANDROID_SDK\" = \"1\" ]; then cd packages/capacitor/android && gradle assemble; elif command -v devenv >/dev/null 2>&1; then devenv shell -- sh -c 'cd packages/capacitor/android && gradle assemble'; else cd packages/capacitor/android && gradle assemble; fi",
+    "build:ios": "cd packages/capacitor && pod lib lint CapacitorNFCPassWallet.podspec --allow-warnings",
+    "build:flutter": "cd packages/flutter && flutter pub get && flutter analyze"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2"
+  }
+}

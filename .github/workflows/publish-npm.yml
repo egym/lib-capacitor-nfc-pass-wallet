@@ -1,0 +1,28 @@
+name: Publish npm (Capacitor + Contracts)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Git tag to publish from (optional)
+        required: false
+
+permissions:
+  contents: read
+  id-token: write
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+      - run: npm ci
+      - run: npm run build
+      - run: npx changeset publish --provenance --access public
+        working-directory: packages/capacitor
