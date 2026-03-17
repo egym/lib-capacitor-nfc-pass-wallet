@@ -1,0 +1,103 @@
+name: Release GitHub (Capacitor)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to release from (optional, defaults to main)
+        required: false
+      tag:
+        description: Git tag to create/use (optional, defaults to capacitor-v<package-version>)
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.inputs.ref || 'main' }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+      - name: Compute release metadata
+        id: meta
+        run: |
+          set -euo pipefail
+
+          version="$(node -p "require('./packages/capacitor/package.json').version")"
+          tag="${{ github.event.inputs.tag }}"
+
+          if [[ -z "$tag" ]]; then
+            tag="capacitor-v$version"
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - name: Build release notes from changelog
+        run: |
+          set -euo pipefail
+
+          version="${{ steps.meta.outputs.version }}"
+          changelog="packages/capacitor/CHANGELOG.md"
+
+          awk -v version="$version" '
+            BEGIN {
+              found = 0
+            }
+            $0 == "## " version {
+              found = 1
+              next
+            }
+            found && /^## / {
+              exit
+            }
+            found {
+              print
+            }
+          ' "$changelog" | sed '/^[[:space:]]*$/d' > release-notes.md
+
+          if [[ ! -s release-notes.md ]]; then
+            echo "Release $version" > release-notes.md
+          fi
+      - name: Create tag if needed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          tag="${{ steps.meta.outputs.tag }}"
+
+          if git rev-parse "$tag" >/dev/null 2>&1; then
+            echo "Tag $tag already exists locally."
+            exit 0
+          fi
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "GitHub release for $tag already exists."
+            exit 0
+          fi
+
+          git tag "$tag"
+          git push origin "$tag"
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          tag="${{ steps.meta.outputs.tag }}"
+          version="${{ steps.meta.outputs.version }}"
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "GitHub release for $tag already exists."
+            exit 0
+          fi
+
+          gh release create "$tag" \
+            --title "Capacitor v$version" \
+            --notes-file release-notes.md
