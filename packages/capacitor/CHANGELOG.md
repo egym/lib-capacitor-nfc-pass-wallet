@@ -1,5 +1,11 @@
 # @egym/capacitor-nfc-pass-wallet
 
+## 0.3.0
+
+### Minor Changes
+
+- Proper iOS packaging
+
 ## 0.2.1
 
 ### Patch Changes

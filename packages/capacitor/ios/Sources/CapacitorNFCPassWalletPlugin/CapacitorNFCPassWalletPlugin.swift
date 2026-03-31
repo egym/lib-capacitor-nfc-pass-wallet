@@ -4,8 +4,16 @@ import PassKit
 import UIKit
 
 @objc(CapacitorNFCPassWalletPlugin)
-public class CapacitorNFCPassWalletPlugin: CAPPlugin {
-    @objc func savePassToWallet(_ call: CAPPluginCall) {
+public class CapacitorNFCPassWalletPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "CapacitorNFCPassWalletPlugin"
+    public let jsName = "CapacitorNFCPassWallet"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "savePassToWallet", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "readPassFromWallet", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "isWalletAvailable", returnType: CAPPluginReturnPromise)
+    ]
+
+    @objc public func savePassToWallet(_ call: CAPPluginCall) {
         guard PKAddPassesViewController.canAddPasses() else {
             call.reject("UNAVAILABLE: Wallet is not available on this device")
             return
@@ -38,7 +46,7 @@ public class CapacitorNFCPassWalletPlugin: CAPPlugin {
         }
     }
 
-    @objc func readPassFromWallet(_ call: CAPPluginCall) {
+    @objc public func readPassFromWallet(_ call: CAPPluginCall) {
         guard let encodedPass = call.getString("iosPkPassBase64") else {
             call.reject("INVALID_PAYLOAD: Missing iosPkPassBase64")
             return
@@ -53,7 +61,7 @@ public class CapacitorNFCPassWalletPlugin: CAPPlugin {
         call.resolve(response)
     }
 
-    @objc func isWalletAvailable(_ call: CAPPluginCall) {
+    @objc public func isWalletAvailable(_ call: CAPPluginCall) {
         let response: [String: Any] = ["result": PKAddPassesViewController.canAddPasses()]
         call.resolve(response)
     }
