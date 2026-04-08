@@ -16,9 +16,9 @@ jobs:
   version:
     runs-on: ubuntu-latest
     env:
-      BRANCH_NAME: chore/release-packages
-      COMMIT_MESSAGE: "chore: version packages"
-      PR_TITLE: "chore: release packages"
+      BRANCH_NAME: chore/release-package
+      COMMIT_MESSAGE: "chore: version package"
+      PR_TITLE: "chore: release package"
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6

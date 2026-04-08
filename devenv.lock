@@ -3,10 +3,11 @@
     "devenv": {
       "locked": {
         "dir": "src/modules",
-        "lastModified": 1772793278,
+        "lastModified": 1775649035,
+        "narHash": "sha256-fN57wo1b9JF/hiEW523JWsDaI85/RagHS6056LBhLQI=",
         "owner": "cachix",
         "repo": "devenv",
-        "rev": "186d38b25f29680b9109ab4d060b5ddf617e5734",
+        "rev": "3ce9320dad64269d952e7e4e18c151e11f4072f5",
         "type": "github"
       },
       "original": {
@@ -16,68 +17,13 @@
         "type": "github"
       }
     },
-    "flake-compat": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1767039857,
-        "owner": "NixOS",
-        "repo": "flake-compat",
-        "rev": "5edf11c44bc78a0d334f6334cdaf7d60d732daab",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "repo": "flake-compat",
-        "type": "github"
-      }
-    },
-    "git-hooks": {
-      "inputs": {
-        "flake-compat": "flake-compat",
-        "gitignore": "gitignore",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1772665116,
-        "owner": "cachix",
-        "repo": "git-hooks.nix",
-        "rev": "39f53203a8458c330f61cc0759fe243f0ac0d198",
-        "type": "github"
-      },
-      "original": {
-        "owner": "cachix",
-        "repo": "git-hooks.nix",
-        "type": "github"
-      }
-    },
-    "gitignore": {
-      "inputs": {
-        "nixpkgs": [
-          "git-hooks",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1762808025,
-        "owner": "hercules-ci",
-        "repo": "gitignore.nix",
-        "rev": "cb5e3fdca1de58ccbc3ef53de65bd372b48f567c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hercules-ci",
-        "repo": "gitignore.nix",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1772736753,
+        "lastModified": 1775608838,
+        "narHash": "sha256-2ySoGH+SAi34U0PeuQgABC0WiH9LQ3tkyHTiE93KUeg=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "917fec990948658ef1ccd07cef2a1ef060786846",
+        "rev": "9a01fad67a57e44e1b3e1d905c6881bcfb209e8a",
         "type": "github"
       },
       "original": {
@@ -90,11 +36,7 @@
     "root": {
       "inputs": {
         "devenv": "devenv",
-        "git-hooks": "git-hooks",
-        "nixpkgs": "nixpkgs",
-        "pre-commit-hooks": [
-          "git-hooks"
-        ]
+        "nixpkgs": "nixpkgs"
       }
     }
   },
