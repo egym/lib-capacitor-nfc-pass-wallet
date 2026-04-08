@@ -1,29 +1,199 @@
-# EGYM NFC Pass Wallet Plugins
+# @egym/capacitor-nfc-pass-wallet
 
-This repository contains the source for EGYM's NFC wallet plugin packages.
+Capacitor plugin for EGYM NFC pass wallet integration on iOS and Android.
 
-## Packages
+This package bundles its native implementations, so partner apps do not need separate iOS or Android wrapper libraries for the wallet flows exposed here.
 
-Use the package-level README that matches your app stack:
+## Installation
 
-| Package | Ecosystem | README |
-| --- | --- | --- |
-| `@egym/capacitor-nfc-pass-wallet` | Capacitor / Ionic | [`packages/capacitor/README.md`](packages/capacitor/README.md) |
-| `egym_nfc_pass_wallet` | Flutter | [`packages/flutter/README.md`](packages/flutter/README.md) |
+### Option 1: Install from npm
 
-## Repository Layout
+```bash
+npm install @egym/capacitor-nfc-pass-wallet
+npx cap sync
+```
 
-- `packages/capacitor`: publishable Capacitor plugin with bundled Android and iOS implementations
-- `packages/flutter`: publishable Flutter plugin with Android and iOS implementations
+### Option 2: Vendor via git submodule
 
-The repository root is a private workspace used for shared tooling and release automation. Consumer installation and API usage live in the package READMEs above.
+If your host projects do not use npm, `npx`, or the Capacitor CLI, you can vendor this repository into your app and wire the native package directly.
 
-## For Package Consumers
+Add the plugin repository as a submodule:
 
-- Capacitor apps should start with [`packages/capacitor/README.md`](packages/capacitor/README.md)
-- Flutter apps should start with [`packages/flutter/README.md`](packages/flutter/README.md)
+```bash
+git submodule add https://github.com/egym/lib-capacitor-nfc-pass-wallet.git vendor/lib-capacitor-nfc-pass-wallet
+git submodule update --init --recursive
+```
 
-## For Maintainers
+Then integrate the native package from the checked-out submodule.
+
+For iOS with CocoaPods, add the local pod in your `Podfile`:
+
+```ruby
+pod 'CapacitorNFCPassWallet', :path => '../vendor/lib-capacitor-nfc-pass-wallet'
+```
+
+If you prefer Swift Package Manager, add `vendor/lib-capacitor-nfc-pass-wallet` as a local package in Xcode and link the `CapacitorNFCPassWallet` product.
+
+For Android, include the local Gradle module from the submodule checkout.
+
+In `settings.gradle`:
+
+```groovy
+include ':capacitor-nfc-pass-wallet'
+project(':capacitor-nfc-pass-wallet').projectDir = new File(settingsDir, '../vendor/lib-capacitor-nfc-pass-wallet/android')
+```
+
+In your app module `build.gradle`:
+
+```groovy
+dependencies {
+		implementation project(':capacitor-nfc-pass-wallet')
+}
+```
+
+Adjust the relative paths to match your repository layout.
+
+When updating the plugin later, pull the new submodule revision first, then rerun your normal native dependency refresh steps such as `pod install` or Gradle sync.
+
+## Import
+
+If your app consumes the plugin through a JavaScript package dependency, import it from the package name:
+
+```ts
+import { CapacitorNFCPassWallet } from "@egym/capacitor-nfc-pass-wallet";
+```
+
+## API
+
+The plugin exposes three methods:
+
+- `savePassToWallet`
+- `readPassFromWallet`
+- `isWalletAvailable`
+
+`isWalletAvailable()` and `readPassFromWallet()` both resolve to objects with a boolean `result` property.
+
+```ts
+type SavePassToWalletOptions = {
+  iosPkPassBase64?: string;
+  androidPassJwt?: string;
+  saveToGooglePayUrl?: string;
+  googlePayJwt?: string;
+};
+
+type ReadPassFromWalletOptions = {
+  iosPkPassBase64?: string;
+};
+
+type WalletAvailabilityResult = {
+  result: boolean;
+};
+
+type ReadPassFromWalletResult = {
+  result: boolean;
+};
+```
+
+### `isWalletAvailable()`
+
+Use this before showing wallet actions in the UI.
+
+```ts
+const availability = await CapacitorNFCPassWallet.isWalletAvailable();
+
+if (availability.result) {
+  // show wallet CTA
+}
+```
+
+### `savePassToWallet(options)`
+
+On iOS, pass the Base64-encoded `.pkpass` payload via `iosPkPassBase64`.
+
+```ts
+await CapacitorNFCPassWallet.savePassToWallet({
+  iosPkPassBase64,
+});
+```
+
+On Android, prefer `googlePayJwt` when available. `saveToGooglePayUrl` is also supported, and `androidPassJwt` remains available temporarily for backward compatibility.
+
+```ts
+await CapacitorNFCPassWallet.savePassToWallet({
+  googlePayJwt,
+  saveToGooglePayUrl,
+  androidPassJwt,
+});
+```
+
+Android payload precedence is:
+
+1. `googlePayJwt`
+2. `saveToGooglePayUrl`
+3. `androidPassJwt`
+
+### `readPassFromWallet(options)`
+
+This is supported on iOS only and returns whether the pass is already present in Apple Wallet.
+
+```ts
+const passState = await CapacitorNFCPassWallet.readPassFromWallet({
+  iosPkPassBase64,
+});
+
+if (passState.result) {
+  // pass already exists in Apple Wallet
+}
+```
+
+On Android, `readPassFromWallet()` is intentionally unsupported and rejects with `NOT_SUPPORTED`.
+
+## Typical Integration Flow
+
+```ts
+const availability = await CapacitorNFCPassWallet.isWalletAvailable();
+
+if (!availability.result) {
+  return;
+}
+
+if (platform === "ios") {
+  const existingPass = await CapacitorNFCPassWallet.readPassFromWallet({
+    iosPkPassBase64,
+  });
+
+  if (!existingPass.result) {
+    await CapacitorNFCPassWallet.savePassToWallet({ iosPkPassBase64 });
+  }
+}
+
+if (platform === "android") {
+  await CapacitorNFCPassWallet.savePassToWallet({
+    googlePayJwt,
+    saveToGooglePayUrl,
+    androidPassJwt,
+  });
+}
+```
+
+## Platform Notes
+
+- iOS availability is based on whether the app can present the Apple Wallet add flow
+- iOS `savePassToWallet()` presents the native Apple Wallet UI
+- Android `savePassToWallet()` launches the Google Wallet add flow
+- Android `readPassFromWallet()` is not supported by Google Wallet APIs
+
+## Errors
+
+The plugin can reject with these error codes:
+
+- `UNAVAILABLE`
+- `INVALID_PAYLOAD`
+- `NOT_SUPPORTED`
+- `USER_CANCELED`
+- `NATIVE_ERROR`
+
+## Development
 
 ### Local Build
 
@@ -32,7 +202,6 @@ npm install
 npm run build
 npm run build:android
 npm run build:ios
-npm run build:flutter
 ```
 
 ### Local Android Toolchain via `devenv`
@@ -41,21 +210,20 @@ To avoid relying on a system-wide Android SDK, this repo supports a project-loca
 
 ```bash
 devenv shell
-cd packages/capacitor/android
+cd android
 gradle assemble
 gradle test
 ```
 
 - `devenv` provisions Java and the Android SDK for this project
 - `ANDROID_HOME` and `ANDROID_SDK_ROOT` are set in the shell
-- The Capacitor Android implementation lives in `packages/capacitor/android`
+- The Android implementation lives in `android`
 
 ### Local iOS Validation
 
-The Capacitor plugin's iOS implementation is distributed through the podspec in `packages/capacitor`.
+The iOS implementation is distributed through the root podspec.
 
 ```bash
-cd packages/capacitor
 pod lib lint CapacitorNFCPassWallet.podspec --allow-warnings
 ```
 
@@ -64,11 +232,8 @@ pod lib lint CapacitorNFCPassWallet.podspec --allow-warnings
 GitHub Actions workflows in `.github/workflows` cover:
 
 - changeset release PR generation via `changesets.yml`
-- GitHub release and tag creation for Capacitor via `release-github.yml`
+- GitHub release and tag creation via `release-github.yml`
 - npm publication via `publish-npm.yml`
-- Flutter publication via `publish-flutter.yml`
-
-Required secrets are documented in `docs/RELEASE_SECRETS.md`.
 
 ### Publish a New Version
 
@@ -82,9 +247,9 @@ npx changeset
 
 2. Commit the generated `.changeset/*.md` file together with your code changes.
 3. Merge the change into `main`.
-4. Let `changesets.yml` apply pending changesets and open or refresh the `chore: release packages` PR.
+4. Let `changesets.yml` apply pending changesets and open or refresh the `chore: release package` PR.
 5. Merge the release PR.
-6. Optionally run `release-github.yml` to create the Capacitor Git tag and GitHub Release.
-7. Run `publish-npm.yml` and/or `publish-flutter.yml` for the ecosystem you want to publish.
+6. Optionally run `release-github.yml` to create the Git tag and GitHub Release.
+7. Run `publish-npm.yml`.
 
-The release PR is generated from `chore/release-packages` and reused for subsequent pending releases instead of opening a new PR each time.
+The release PR is generated from `chore/release-package` and reused for subsequent pending releases instead of opening a new PR each time.

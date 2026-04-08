@@ -1,4 +1,4 @@
-name: Release GitHub (Capacitor)
+name: Release GitHub
 
 on:
   workflow_dispatch:
@@ -29,7 +29,9 @@ jobs:
         run: |
           set -euo pipefail
 
-          version="$(node -p "require('./packages/capacitor/package.json').version")"
+          version="$(node -p "require('./package.json').version")"
+          changelog="CHANGELOG.md"
+          release_title="Capacitor v$version"
           tag="${{ github.event.inputs.tag }}"
 
           if [[ -z "$tag" ]]; then
@@ -37,19 +39,21 @@ jobs:
           fi
 
           echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "changelog=$changelog" >> "$GITHUB_OUTPUT"
+          echo "release_title=$release_title" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
       - name: Build release notes from changelog
         run: |
           set -euo pipefail
 
           version="${{ steps.meta.outputs.version }}"
-          changelog="packages/capacitor/CHANGELOG.md"
+          changelog="${{ steps.meta.outputs.changelog }}"
 
           awk -v version="$version" '
             BEGIN {
               found = 0
             }
-            $0 == "## " version {
+            $0 == "## " version || $0 == "## [" version "]" {
               found = 1
               next
             }
@@ -92,6 +96,7 @@ jobs:
 
           tag="${{ steps.meta.outputs.tag }}"
           version="${{ steps.meta.outputs.version }}"
+          release_title="${{ steps.meta.outputs.release_title }}"
 
           if gh release view "$tag" >/dev/null 2>&1; then
             echo "GitHub release for $tag already exists."
@@ -99,5 +104,5 @@ jobs:
           fi
 
           gh release create "$tag" \
-            --title "Capacitor v$version" \
+            --title "$release_title" \
             --notes-file release-notes.md

@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.name = 'CapacitorNFCPassWallet'
   s.version = package['version']
   s.summary = package['description']
-  s.license = package['license']
+  s.license = { :type => package['license'], :file => 'LICENSE' }
   s.homepage = 'https://github.com/egym/lib-capacitor-nfc-pass-wallet'
   s.author = 'eGym'
   s.source = { :git => 'https://github.com/egym/lib-capacitor-nfc-pass-wallet.git', :tag => package['name'] + '@' + package['version'] }
