@@ -231,9 +231,10 @@ pod lib lint CapacitorNFCPassWallet.podspec --allow-warnings
 
 GitHub Actions workflows in `.github/workflows` cover:
 
-- changeset release PR generation via `changesets.yml`
 - GitHub release and tag creation via `release-github.yml`
 - npm publication via `publish-npm.yml`
+
+Release PR preparation is maintainer-driven via `npm run release:prepare`.
 
 ### Publish a New Version
 
@@ -247,9 +248,9 @@ npx changeset
 
 2. Commit the generated `.changeset/*.md` file together with your code changes.
 3. Merge the change into `main`.
-4. Let `changesets.yml` apply pending changesets and open or refresh the `chore: release package` PR.
+4. Run `npm run release:prepare` from a clean checkout.
 5. Merge the release PR.
 6. Optionally run `release-github.yml` to create the Git tag and GitHub Release.
 7. Run `publish-npm.yml`.
 
-The release PR is generated from `chore/release-package` and reused for subsequent pending releases instead of opening a new PR each time.
+The release prep command resets `chore/release-package` from `origin/main`, applies pending changesets, force-pushes the branch, and creates the release PR with `gh` when available. If `gh` is not installed, it prints the exact PR command to run manually.
