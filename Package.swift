@@ -2,11 +2,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "CapacitorNFCPassWallet",
+    name: "EgymCapacitorNfcPassWallet",
     platforms: [.iOS(.v15)],
     products: [
         .library(
-            name: "CapacitorNFCPassWallet",
+            name: "EgymCapacitorNfcPassWallet",
             targets: ["CapacitorNFCPassWalletPlugin"])
     ],
     dependencies: [
