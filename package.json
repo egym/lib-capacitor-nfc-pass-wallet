@@ -28,6 +28,7 @@
     "prepare": "husky",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "release:prepare": "bash ./scripts/release-prepare.sh",
     "lint:ts": "npm run typecheck",
     "lint:android": "if [ \"$USE_SYSTEM_ANDROID_SDK\" = \"1\" ]; then cd android && gradle lint; elif command -v devenv >/dev/null 2>&1; then devenv shell -- sh -c 'cd android && gradle lint'; else cd android && gradle lint; fi",
     "lint:ios": "pod lib lint CapacitorNFCPassWallet.podspec --allow-warnings",
