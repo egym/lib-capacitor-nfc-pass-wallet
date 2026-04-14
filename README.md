@@ -32,7 +32,7 @@ For iOS with CocoaPods, add the local pod in your `Podfile`:
 pod 'CapacitorNFCPassWallet', :path => '../vendor/lib-capacitor-nfc-pass-wallet'
 ```
 
-If you prefer Swift Package Manager, add `vendor/lib-capacitor-nfc-pass-wallet` as a local package in Xcode and link the `CapacitorNFCPassWallet` product.
+If you prefer Swift Package Manager, add `vendor/lib-capacitor-nfc-pass-wallet` as a local package in Xcode and link the `EgymCapacitorNfcPassWallet` product.
 
 For Android, include the local Gradle module from the submodule checkout.
 
