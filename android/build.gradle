@@ -1,8 +1,8 @@
 ext {
-    capacitorVersion = System.getenv('CAPACITOR_VERSION') ?: '6.2.1'
+    capacitorVersion = System.getenv('CAPACITOR_VERSION') ?: '8.4.2'
     junitVersion = project.hasProperty('junitVersion') ? rootProject.ext.junitVersion : '4.13.2'
-    androidxAppCompatVersion = project.hasProperty('androidxAppCompatVersion') ? rootProject.ext.androidxAppCompatVersion : '1.7.0'
-    androidxCoreVersion = project.hasProperty('androidxCoreVersion') ? rootProject.ext.androidxCoreVersion : '1.15.0'
+    androidxAppCompatVersion = project.hasProperty('androidxAppCompatVersion') ? rootProject.ext.androidxAppCompatVersion : '1.7.1'
+    playServicesPayVersion = project.hasProperty('playServicesPayVersion') ? rootProject.ext.playServicesPayVersion : '16.5.0'
 }
 
 buildscript {
@@ -11,39 +11,39 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.7.2'
+        classpath 'com.android.tools.build:gradle:8.13.0'
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    namespace "com.egym.capacitor.nfcpasswallet"
-    buildToolsVersion project.hasProperty('buildToolsVersion') ? rootProject.ext.buildToolsVersion : '35.0.0'
-    compileSdk project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 35
+    namespace = "com.egym.capacitor.nfcpasswallet"
+    buildToolsVersion = project.hasProperty('buildToolsVersion') ? rootProject.ext.buildToolsVersion : '36.0.0'
+    compileSdk = project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 36
 
     defaultConfig {
-        minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 24
-        targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 35
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        minSdkVersion = project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 24
+        targetSdkVersion = project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 36
+        versionCode = 1
+        versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
     }
 
     lintOptions {
-        abortOnError false
+        abortOnError = false
     }
 }
 
@@ -60,8 +60,7 @@ dependencies {
     }
 
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
-    implementation "androidx.core:core:$androidxCoreVersion"
-    implementation "com.google.android.gms:play-services-pay:16.5.0"
+    implementation "com.google.android.gms:play-services-pay:$playServicesPayVersion"
 
     testImplementation "junit:junit:$junitVersion"
 }

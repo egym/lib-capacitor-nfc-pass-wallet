@@ -7,7 +7,7 @@ on:
         description: Git ref to release from (optional, defaults to main)
         required: false
       tag:
-        description: Git tag to create/use (optional, defaults to capacitor-v<package-version>)
+        description: Git tag to create/use (optional, must equal the package version)
         required: false
 
 permissions:
@@ -17,25 +17,30 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ github.event.inputs.ref || 'main' }}
           fetch-depth: 0
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version-file: .nvmrc
       - name: Compute release metadata
         id: meta
+        env:
+          REQUESTED_TAG: ${{ github.event.inputs.tag }}
         run: |
           set -euo pipefail
 
           version="$(node -p "require('./package.json').version")"
           changelog="CHANGELOG.md"
-          release_title="Capacitor v$version"
-          tag="${{ github.event.inputs.tag }}"
+          release_title="@egym/capacitor-nfc-pass-wallet v$version"
+          tag="$REQUESTED_TAG"
 
           if [[ -z "$tag" ]]; then
-            tag="capacitor-v$version"
+            tag="$version"
+          elif [[ "$tag" != "$version" ]]; then
+            echo "Requested tag $tag does not match package version $version." >&2
+            exit 1
           fi
 
           echo "version=$version" >> "$GITHUB_OUTPUT"

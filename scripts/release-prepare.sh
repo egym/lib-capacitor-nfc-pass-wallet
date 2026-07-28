@@ -16,6 +16,8 @@ git fetch origin main
 git switch -C "$BRANCH_NAME" origin/main
 
 npm exec changeset version
+npm install --package-lock-only --ignore-scripts
+npm run verify:lockfile
 
 if git diff --quiet; then
   echo "No pending changesets to version."

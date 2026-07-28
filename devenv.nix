@@ -5,18 +5,18 @@
 
   packages = [
     pkgs.git
-    pkgs.jdk17
+    pkgs.jdk21
   ];
 
   languages.java = {
     enable = true;
-    jdk.package = pkgs.jdk17;
+    jdk.package = pkgs.jdk21;
   };
 
   android = {
     enable = true;
-    platforms.version = [ "35" ];
-    buildTools.version = [ "35.0.0" ];
+    platforms.version = [ "36" ];
+    buildTools.version = [ "36.0.0" ];
     ndk.enable = false;
     systemImages.enable = false;
     sources.enable = false;
@@ -27,7 +27,7 @@
 
   scripts.gw.exec = ''
     cd android
-    gradle "$@"
+    ./gradlew "$@"
   '';
 
   enterShell = ''

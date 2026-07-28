@@ -4,6 +4,8 @@ Capacitor plugin for EGYM NFC pass wallet integration on iOS and Android.
 
 This package bundles its native implementations, so partner apps do not need separate iOS or Android wrapper libraries for the wallet flows exposed here.
 
+Supported Capacitor versions are 7 and 8. Development requires Node.js 22 or newer; CI and releases use the Node.js version pinned in `.nvmrc`.
+
 ## Installation
 
 ### Option 1: Install from npm
@@ -211,13 +213,15 @@ To avoid relying on a system-wide Android SDK, this repo supports a project-loca
 ```bash
 devenv shell
 cd android
-gradle assemble
-gradle test
+./gradlew assemble
+./gradlew test
 ```
 
 - `devenv` provisions Java and the Android SDK for this project
 - `ANDROID_HOME` and `ANDROID_SDK_ROOT` are set in the shell
+- the checked-in Gradle wrapper pins the build tool version
 - The Android implementation lives in `android`
+- Android consumers inherit AppCompat because Capacitor's bridge exposes `AppCompatActivity`, plus `play-services-pay`; the unused AndroidX Core dependency is intentionally omitted
 
 ### Local iOS Validation
 
@@ -250,7 +254,7 @@ npx changeset
 3. Merge the change into `main`.
 4. Run `npm run release:prepare` from a clean checkout.
 5. Merge the release PR.
-6. Optionally run `release-github.yml` to create the Git tag and GitHub Release.
+6. Optionally run `release-github.yml` to create the semver Git tag and GitHub Release.
 7. Run `publish-npm.yml`.
 
-The release prep command resets `chore/release-package` from `origin/main`, applies pending changesets, force-pushes the branch, and creates the release PR with `gh` when available. If `gh` is not installed, it prints the exact PR command to run manually.
+Release tags are the plain package version (for example, `0.4.0`) so CocoaPods and Swift Package Manager resolve the same release. The release prep command resets `chore/release-package` from `origin/main`, applies pending changesets, refreshes the lockfile, force-pushes the branch, and creates the release PR with `gh` when available. If `gh` is not installed, it prints the exact PR command to run manually.
