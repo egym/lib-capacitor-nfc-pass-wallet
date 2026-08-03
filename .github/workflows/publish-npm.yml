@@ -36,4 +36,4 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run verify:lockfile
       - run: npm run build
-      - run: npm exec -- changeset publish --provenance --access public
+      - run: npm publish --provenance --access public
