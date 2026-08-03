@@ -1,7 +1,6 @@
 package com.egym.capacitor.nfcpasswallet;
 
 import android.app.Activity;
-import android.content.Intent;
 
 import androidx.annotation.Nullable;
 

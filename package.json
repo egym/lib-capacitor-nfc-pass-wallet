@@ -19,7 +19,9 @@
   },
   "files": [
     "dist",
-    "android",
+    "android/src/main",
+    "android/build.gradle",
+    "android/gradle.properties",
     "ios",
     "Package.swift",
     "CapacitorNFCPassWallet.podspec"
@@ -28,21 +30,22 @@
     "prepare": "husky",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "verify:lockfile": "node ./scripts/verify-lockfile.mjs",
     "release:prepare": "bash ./scripts/release-prepare.sh",
     "lint:ts": "npm run typecheck",
-    "lint:android": "if [ \"$USE_SYSTEM_ANDROID_SDK\" = \"1\" ]; then cd android && gradle lint; elif command -v devenv >/dev/null 2>&1; then devenv shell -- sh -c 'cd android && gradle lint'; else cd android && gradle lint; fi",
+    "lint:android": "if [ \"$USE_SYSTEM_ANDROID_SDK\" = \"1\" ]; then cd android && ./gradlew lint; elif command -v devenv >/dev/null 2>&1; then devenv shell -- sh -c 'cd android && ./gradlew lint'; else cd android && ./gradlew lint; fi",
     "lint:ios": "pod lib lint CapacitorNFCPassWallet.podspec --allow-warnings",
-    "build:android": "if [ \"$USE_SYSTEM_ANDROID_SDK\" = \"1\" ]; then cd android && gradle assemble; elif command -v devenv >/dev/null 2>&1; then devenv shell -- sh -c 'cd android && gradle assemble'; else cd android && gradle assemble; fi",
+    "build:android": "if [ \"$USE_SYSTEM_ANDROID_SDK\" = \"1\" ]; then cd android && ./gradlew assemble; elif command -v devenv >/dev/null 2>&1; then devenv shell -- sh -c 'cd android && ./gradlew assemble'; else cd android && ./gradlew assemble; fi",
     "build:ios": "pod lib lint CapacitorNFCPassWallet.podspec --allow-warnings"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "peerDependencies": {
-    "@capacitor/core": ">=6.0.0"
+    "@capacitor/core": "^7.0.0 || ^8.0.0"
   },
   "devDependencies": {
-    "@capacitor/core": "^6.2.0",
+    "@capacitor/core": "^8.4.2",
     "@changesets/cli": "^2.29.6",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
