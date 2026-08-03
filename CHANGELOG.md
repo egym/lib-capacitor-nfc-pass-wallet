@@ -1,5 +1,11 @@
 # @egym/capacitor-nfc-pass-wallet
 
+## 0.4.0
+
+### Minor Changes
+
+- 5a3f0ad: Support Capacitor 7 and 8 consistently across npm, Android, CocoaPods, and Swift Package Manager, and harden dependency and release reproducibility.
+
 ## 0.3.1
 
 ### Patch Changes
