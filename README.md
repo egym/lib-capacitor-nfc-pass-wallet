@@ -258,3 +258,5 @@ npx changeset
 7. Run `publish-npm.yml`.
 
 Release tags are the plain package version (for example, `0.4.0`) so CocoaPods and Swift Package Manager resolve the same release. The release prep command resets `chore/release-package` from `origin/main`, applies pending changesets, refreshes the lockfile, force-pushes the branch, and creates the release PR with `gh` when available. If `gh` is not installed, it prints the exact PR command to run manually.
+
+If there are no pending changesets or prerelease exit to apply, release preparation exits successfully without creating or pushing a release commit.
