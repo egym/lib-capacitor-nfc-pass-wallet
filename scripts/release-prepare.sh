@@ -15,6 +15,22 @@ fi
 git fetch origin main
 git switch -C "$BRANCH_NAME" origin/main
 
+has_pending_changesets="$(node --input-type=module <<'NODE'
+import { readPreState } from "@changesets/pre";
+import { readChangesets } from "@changesets/read";
+
+const cwd = process.cwd();
+const changesets = await readChangesets(cwd);
+const preState = await readPreState(cwd);
+console.log(changesets.length > 0 || preState?.mode === "exit");
+NODE
+)"
+
+if [[ "$has_pending_changesets" == "false" ]]; then
+  echo "No pending changesets to version."
+  exit 0
+fi
+
 npm exec changeset version
 npm install --package-lock-only --ignore-scripts
 npm run verify:lockfile
