@@ -222,6 +222,14 @@ cd android
 - the checked-in Gradle wrapper pins the build tool version
 - The Android implementation lives in `android`
 - Android consumers inherit AppCompat because Capacitor's bridge exposes `AppCompatActivity`, plus `play-services-pay`; the unused AndroidX Core dependency is intentionally omitted
+- Android CI builds and tests the plugin in host projects using AGP 8.13.0 / Gradle 8.14.6 and AGP 9.3.1 / Gradle 9.7.0, with both supported Capacitor versions. The plugin's standalone build retains AGP 8.
+- Release minification remains disabled. The default ProGuard configuration uses `proguard-android-optimize.txt`, which is accepted by both AGP 8 and 9.
+
+To run the host compatibility check with a matching Gradle installation and JDK 21:
+
+```bash
+CAPACITOR_VERSION=8.4.2 gradle --no-daemon -p scripts/android-compatibility -PagpVersion=9.3.1 :nfc-pass-wallet:assemble :nfc-pass-wallet:test
+```
 
 ### Local iOS Validation
 

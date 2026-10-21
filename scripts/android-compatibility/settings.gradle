@@ -1,0 +1,4 @@
+rootProject.name = 'nfc-pass-wallet-compatibility'
+
+include ':nfc-pass-wallet'
+project(':nfc-pass-wallet').projectDir = file('../../android')
