@@ -1,5 +1,11 @@
 # @egym/capacitor-nfc-pass-wallet
 
+## 0.4.1
+
+### Patch Changes
+
+- f3c6552: Use the optimized default ProGuard configuration so Android host projects can configure the plugin with AGP 9, while retaining AGP 8 and Capacitor 7/8 compatibility. Release minification remains disabled.
+
 ## 0.4.0
 
 ### Minor Changes
