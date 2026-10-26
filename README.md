@@ -100,6 +100,8 @@ type ReadPassFromWalletResult = {
 
 Use this before showing wallet actions in the UI.
 
+On iOS, this reports whether adding passes is supported, not whether an existing pass can be opened. Use `readPassFromWallet()` to determine whether to show a "Go to Apple Wallet" action for an existing pass, even if adding passes is unavailable.
+
 ```ts
 const availability = await CapacitorNFCPassWallet.isWalletAvailable();
 
@@ -111,6 +113,10 @@ if (availability.result) {
 ### `savePassToWallet(options)`
 
 On iOS, pass the Base64-encoded `.pkpass` payload via `iosPkPassBase64`.
+
+If the pass is already in Apple Wallet, this opens its Wallet URL instead of presenting the add sheet. If the decoded pass has no URL, the plugin looks up the installed pass by its pass type identifier and serial number. The promise resolves when iOS reports that the URL was opened, or rejects with `NATIVE_ERROR` if no URL is available or opening fails; it never falls back to the add sheet for an existing pass.
+
+For a missing pass, this presents the native add sheet and resolves when presentation completes, not when the user finishes adding the pass.
 
 ```ts
 await CapacitorNFCPassWallet.savePassToWallet({
@@ -155,21 +161,18 @@ On Android, `readPassFromWallet()` is intentionally unsupported and rejects with
 ```ts
 const availability = await CapacitorNFCPassWallet.isWalletAvailable();
 
-if (!availability.result) {
-  return;
-}
-
 if (platform === "ios") {
   const existingPass = await CapacitorNFCPassWallet.readPassFromWallet({
     iosPkPassBase64,
   });
 
-  if (!existingPass.result) {
+  // Use "Go to Apple Wallet" for an existing pass, otherwise "Add to Apple Wallet".
+  if (existingPass.result || availability.result) {
     await CapacitorNFCPassWallet.savePassToWallet({ iosPkPassBase64 });
   }
 }
 
-if (platform === "android") {
+if (platform === "android" && availability.result) {
   await CapacitorNFCPassWallet.savePassToWallet({
     googlePayJwt,
     saveToGooglePayUrl,
@@ -180,8 +183,9 @@ if (platform === "android") {
 
 ## Platform Notes
 
-- iOS availability is based on whether the app can present the Apple Wallet add flow
-- iOS `savePassToWallet()` presents the native Apple Wallet UI
+- iOS availability is based on whether the app can present the Apple Wallet add flow; it does not gate opening an existing pass
+- iOS `savePassToWallet()` requires an available pass library, opens Wallet for an existing pass, and checks add-pass support only before presenting the add sheet for a missing pass
+- iOS Wallet navigation must be verified in a host app on a real device with the relevant Wallet pass entitlements
 - Android `savePassToWallet()` launches the Google Wallet add flow
 - Android `readPassFromWallet()` is not supported by Google Wallet APIs
 

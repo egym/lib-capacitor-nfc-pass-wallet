@@ -14,7 +14,7 @@ public class CapacitorNFCPassWalletPlugin: CAPPlugin, CAPBridgedPlugin {
     ]
 
     @objc public func savePassToWallet(_ call: CAPPluginCall) {
-        guard PKAddPassesViewController.canAddPasses() else {
+        guard PKPassLibrary.isPassLibraryAvailable() else {
             call.reject("UNAVAILABLE: Wallet is not available on this device")
             return
         }
@@ -30,6 +30,31 @@ public class CapacitorNFCPassWalletPlugin: CAPPlugin, CAPBridgedPlugin {
         }
 
         DispatchQueue.main.async {
+            let passLibrary = PKPassLibrary()
+            if passLibrary.containsPass(pass) {
+                guard let passURL = pass.passURL ?? passLibrary.pass(
+                    withPassTypeIdentifier: pass.passTypeIdentifier,
+                    serialNumber: pass.serialNumber
+                )?.passURL else {
+                    call.reject("NATIVE_ERROR: No Wallet URL available for the existing pass")
+                    return
+                }
+
+                UIApplication.shared.open(passURL, options: [:]) { opened in
+                    if opened {
+                        call.resolve()
+                    } else {
+                        call.reject("NATIVE_ERROR: Failed to open the existing pass in Wallet")
+                    }
+                }
+                return
+            }
+
+            guard PKAddPassesViewController.canAddPasses() else {
+                call.reject("UNAVAILABLE: Adding passes to Wallet is not available on this device")
+                return
+            }
+
             guard let viewController = PKAddPassesViewController(pass: pass) else {
                 call.reject("NATIVE_ERROR: Failed to create PKAddPassesViewController")
                 return
