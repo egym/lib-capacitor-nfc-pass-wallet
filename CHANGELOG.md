@@ -1,5 +1,11 @@
 # @egym/capacitor-nfc-pass-wallet
 
+## 0.4.2
+
+### Patch Changes
+
+- cbdb6db: Fix BMACG-605: open existing iOS passes in Apple Wallet instead of presenting the add sheet, with an installed-pass URL fallback and explicit navigation errors. Preserve the add flow for missing passes.
+
 ## 0.4.1
 
 ### Patch Changes
